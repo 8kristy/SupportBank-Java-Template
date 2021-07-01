@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import java.util.stream.Collector;
@@ -17,7 +18,6 @@ public class Main {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static void main(String args[]) {
-        LOGGER.info("This is a log entry.");
         List<User> users = loadCSV("DodgyTransactions2015.csv");
         Scanner sc = new Scanner(System.in);
         System.out.println("Commads:\n1. List All\n2. List [Account]");
@@ -51,12 +51,20 @@ public class Main {
             //sc.next();
             while (sc.hasNextLine()) {
                 String tmpstr = sc.nextLine();
+                LOGGER.info("Adding entry " + tmpstr);
                 String[] trStr = tmpstr.split(",");
                 String date = trStr[0];
                 String from = trStr[1];
                 String to = trStr[2];
                 String narrative = trStr[3];
-                double amount = Double.parseDouble(trStr[4]);
+                double amount = 0;
+                try{
+                    amount = Double.parseDouble(trStr[4]);
+                }
+                catch (Exception e){
+                    LOGGER.info("Couldn't parse " + trStr[4] + " in entry " + tmpstr);
+                    System.out.println("Couldn't parse " + trStr[4]);
+                }
                 Transaction tr = new Transaction(date, from, to, narrative, amount);
                 User usFrom = getUserByName(users, from);
                 User usTo = getUserByName(users, to);
