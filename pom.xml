@@ -31,6 +31,9 @@
                 <version>3.0.2</version>
                 <configuration>
                     <archive>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                        </manifestEntries>
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <mainClass>training.supportbank.Main</mainClass>

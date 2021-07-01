@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.logging.Logger;
-import java.util.logging.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.io.File;
@@ -14,12 +14,11 @@ import java.io.FileNotFoundException;
 
 public class Main {
 
-    private static final Logger LOGGER = LogManager.getLogger("");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static void main(String args[]) {
-        LOGGER.fine("This is a log message");
+        LOGGER.info("This is a log entry.");
         List<User> users = loadCSV("DodgyTransactions2015.csv");
-        
         Scanner sc = new Scanner(System.in);
         System.out.println("Commads:\n1. List All\n2. List [Account]");
         System.out.print("Please enter an option: ");
