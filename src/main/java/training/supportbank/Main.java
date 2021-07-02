@@ -1,5 +1,10 @@
 package training.supportbank;
 
+import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,15 +15,21 @@ import org.apache.logging.log4j.LogManager;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.io.File;
+import java.io.Reader;
+import java.nio.file.Files;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 
 
 public class Main {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static void main(String args[]) {
-        List<User> users = loadCSV("DodgyTransactions2015.csv");
+    public static void main(String args[]) throws Exception {
+        //List<User> users = loadCSV("DodgyTransactions2015.csv");
+        List<User> users = loadJSON("Transactions2013.json");
         Scanner sc = new Scanner(System.in);
         System.out.println("Commads:\n1. List All\n2. List [Account]");
         System.out.print("Please enter an option: ");
@@ -77,6 +88,33 @@ public class Main {
         catch (FileNotFoundException e) {
             System.out.println("File not found.");
             e.printStackTrace();
+        }
+        return users;
+    }
+
+    public static List<User> loadJSON(String filename) throws Exception {
+        List<User> users = new ArrayList<>(); 
+        Path path = Paths.get(filename);
+
+        try (Reader reader = Files.newBufferedReader(path,
+            StandardCharsets.UTF_8)) {
+            JsonParser parser = new JsonParser();
+            JsonElement tree = parser.parse(reader);
+            JsonArray array = tree.getAsJsonArray();
+
+            for (JsonElement element: array) {
+                if (element.isJsonObject()) {
+                    JsonObject input = element.getAsJsonObject();
+                    Gson gson = new Gson();
+                    Transaction tr = gson.fromJson(element.toString(), Transaction.class);
+
+                    User usFrom = getUserByName(users, tr.getFrom());
+                    User usTo = getUserByName(users, tr.getTo());
+
+                    usFrom.addTransactionFrom(tr);
+                    usTo.addTransactionTo(tr);
+                }
+            }
         }
         return users;
     }

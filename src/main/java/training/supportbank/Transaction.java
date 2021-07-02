@@ -3,15 +3,15 @@ package training.supportbank;
 public class Transaction {
 
 private String date;
-private String from;
-private String to;
+private String fromAccount;
+private String toAccount;
 private String narrative;
 private double amount;
 
 public Transaction(String date, String from, String to, String narrative, double amount){
     this.date = date;
-    this.from = from;
-    this.to = to;
+    this.fromAccount = from;
+    this.toAccount = to;
     this.narrative = narrative;
     this.amount = amount;
 }
@@ -21,11 +21,11 @@ public String getDate() {
 }
 
 public String getFrom() {
-    return from;
+    return fromAccount;
 }
 
 public String getTo() {
-    return to;
+    return toAccount;
 }
 
 public String getNarrative() {
@@ -45,7 +45,7 @@ public void setDate(String date) {
 }
 
 public void setFrom(String from) {
-    this.from = from;
+    this.fromAccount = from;
 }
 
 public void setNarrative(String narrative) {
@@ -53,7 +53,16 @@ public void setNarrative(String narrative) {
 }
 
 public void setTo(String to) {
-    this.to = to;
+    this.toAccount = to;
 }
+
+@Override
+public String toString() {
+    return "Date: " + date + 
+            "\nFrom:" + fromAccount + 
+            "\nTo: " + toAccount + 
+            "\nNarrative: " + narrative + 
+            "\nAmount: " + amount;
+        }
 
 }
