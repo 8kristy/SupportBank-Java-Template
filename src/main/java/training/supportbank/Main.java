@@ -11,20 +11,34 @@ public class Main {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static void main(String args[]) throws Exception {
-        List<User> users = CSVLoader.loadCSV("DodgyTransactions2015.csv");
-        //List<User> users = JSONLoader.loadJSON("Transactions2013.json");
-        //List<User> users = XMLLoader.loadXML("Transactions2012.xml");
-        String command = getCommandFromUser();
-        if (command.equals("List All")){
-            ListAll(users);
+        if (args.length > 0){
+            List<User> users = getFileNameFromUser(args[0]);
+            if (users != null){
+                String command = getCommandFromUser();
+                if (command.equals("List All"))
+                    ListAll(users);
+                else if (command.contains("List"))
+                    listUserTransactions(users, command);
+                else
+                    System.out.println("Invalid command.");
+            }
         }
-        else if (command.contains("List")){
-            listUserTransactions(users, command);
-        }
-        else{
-            System.out.println("Invalid command.");
-        }
+        else
+            System.out.println("Filename not given in arguments.");
     }   
+
+    public static List<User> getFileNameFromUser(String fileName) throws Exception{
+       
+        if (fileName.endsWith("csv"))
+            return CSVLoader.loadCSV(fileName);
+        else if (fileName.endsWith("xml"))
+            return XMLLoader.loadXML(fileName);
+        else if (fileName.endsWith("json"))
+            return JSONLoader.loadJSON(fileName);
+        else
+            System.out.println("File type not supported.");
+        return null;
+    }
 
     public static void listUserTransactions(List<User> users, String command){
         String name = command.substring(5);

@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gson.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.nio.charset.StandardCharsets;
@@ -31,7 +30,6 @@ public class JSONLoader {
 
             for (JsonElement element: array) {
                 if (element.isJsonObject()) {
-                    JsonObject input = element.getAsJsonObject();
                     Gson gson = new Gson();
                     Transaction tr = gson.fromJson(element.toString(), Transaction.class);
 
@@ -42,6 +40,9 @@ public class JSONLoader {
                     usTo.addTransactionTo(tr);
                 }
             }
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
         return users;
     }
