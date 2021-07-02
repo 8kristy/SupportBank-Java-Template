@@ -39,8 +39,8 @@ public class Main {
     public static void exportTransactions(String filename, List<Transaction> tr){
         if (filename.endsWith("csv"))
             CSVLoader.writeCSV(filename, tr);
-        // else if (fileName.endsWith("xml"))
-        //     return XMLLoader.loadXML(fileName);
+        else if (filename.endsWith("xml"))
+            XMLLoader.writeXML(filename, tr);
         else if (filename.endsWith("json"))
             JSONLoader.writeJSON(filename, tr);
         else
