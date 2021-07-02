@@ -20,7 +20,15 @@ import java.nio.file.Files;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.nio.charset.StandardCharsets;
+
+import javax.xml.parsers.DocumentBuilderFactory;  
+import javax.xml.parsers.DocumentBuilder;  
+import org.w3c.dom.Document;  
+import org.w3c.dom.NodeList;  
+import org.w3c.dom.Node;  
+import org.w3c.dom.Element;  
 
 
 public class Main {
@@ -29,7 +37,8 @@ public class Main {
 
     public static void main(String args[]) throws Exception {
         //List<User> users = loadCSV("DodgyTransactions2015.csv");
-        List<User> users = loadJSON("Transactions2013.json");
+        //List<User> users = loadJSON("Transactions2013.json");
+        List<User> users = loadXML("Transactions2012.xml");
         Scanner sc = new Scanner(System.in);
         System.out.println("Commads:\n1. List All\n2. List [Account]");
         System.out.print("Please enter an option: ");
@@ -51,6 +60,56 @@ public class Main {
             System.out.println("Invalid command.");
         }
         
+    }
+
+    public static List<User> loadXML(String filename) {
+        List<User> users = new ArrayList<>();
+        try{
+            File file = new File(filename);
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();  
+            DocumentBuilder db = dbf.newDocumentBuilder();  
+            Document doc = db.parse(file);  
+            doc.getDocumentElement().normalize();  
+            NodeList nodeList = doc.getElementsByTagName("SupportTransaction");  
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                String shortDate = node.getAttributes().getNamedItem("Date").getNodeValue();
+                int days = Integer.parseInt(shortDate);
+                LocalDate start = LocalDate.of(1900, 1, 1);
+                LocalDate date = start.plusDays(days).minusDays(2);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {  
+                    Element e = (Element) node;  
+                    String narrative = e.getElementsByTagName("Description").item(0).getTextContent();  
+                    String amountStr = e.getElementsByTagName("Value").item(0).getTextContent(); 
+                    double amount = 0;
+                    String from = "";
+                    String to = "";
+                    try{
+                        amount = Double.parseDouble(amountStr);
+                    } 
+                    catch (Exception ex){
+                        System.out.println("Couldn't parse " + amountStr + " to double.");
+                    }
+                    NodeList partiesNodeList = e.getElementsByTagName("Parties");
+                    Node partiesNode = partiesNodeList.item(0);
+                    if (partiesNode.getNodeType() == Node.ELEMENT_NODE) { 
+                        Element partiesE = (Element) partiesNode;  
+                        from = partiesE.getElementsByTagName("From").item(0).getTextContent();  
+                        to = partiesE.getElementsByTagName("To").item(0).getTextContent(); 
+                    }
+                    Transaction tr = new Transaction(date.toString(), from, to, narrative, amount);
+                    User usFrom = getUserByName(users, from);
+                    User usTo = getUserByName(users, to);
+
+                    usFrom.addTransactionFrom(tr);
+                    usTo.addTransactionTo(tr);
+                }
+            }  
+        }
+        catch(Exception e){
+            System.out.println(e);
+        }
+        return users;
     }
 
     public static List<User> loadCSV(String filename) {
