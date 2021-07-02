@@ -6,8 +6,6 @@ import java.util.Scanner;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class CSVLoader {
 
@@ -26,11 +24,11 @@ public class CSVLoader {
                 String from = trStr[1];
                 String to = trStr[2];
                 String narrative = trStr[3];
-                double amount = Main.parseDoubleSafe(trStr[4]);
+                double amount = TransactionUtil.parseDoubleSafe(trStr[4]);
                 
                 Transaction tr = new Transaction(date, from, to, narrative, amount);
-                User usFrom = Main.getUserByName(users, from);
-                User usTo = Main.getUserByName(users, to);
+                User usFrom = TransactionUtil.getUserByName(users, from);
+                User usTo = TransactionUtil.getUserByName(users, to);
 
                 usFrom.addTransactionFrom(tr);
                 usTo.addTransactionTo(tr);
@@ -43,25 +41,6 @@ public class CSVLoader {
         }
         return users;
     }
-    public static void writeCSV(String filename, List<Transaction> tr){
-        try{
-            File file = new File(filename);
-            file.createNewFile();
-            FileWriter writer = new FileWriter(filename);
-            writer.write("Date,From,To,Narrative,Amount\n");
-            for (Transaction trans : tr){
-                writer.write(String.join(",", trans.getDate(), trans.getFrom(), 
-                    trans.getTo(), trans.getNarrative(), Double.toString(trans.getAmount())));
-                    writer.write("\n");
-            }
-
-            writer.close();
-            System.out.println("Successfully exported to " + filename);
-        }
-        catch(IOException e){
-            System.out.println("An error occured");
-            e.printStackTrace();
-        }
-    }
+   
     
 }

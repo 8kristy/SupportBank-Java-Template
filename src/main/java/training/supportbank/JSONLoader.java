@@ -1,8 +1,5 @@
 package training.supportbank;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Reader;
 
 import java.util.ArrayList;
@@ -33,8 +30,8 @@ public class JSONLoader {
                     Gson gson = new Gson();
                     Transaction tr = gson.fromJson(element.toString(), Transaction.class);
 
-                    User usFrom = Main.getUserByName(users, tr.getFrom());
-                    User usTo = Main.getUserByName(users, tr.getTo());
+                    User usFrom = TransactionUtil.getUserByName(users, tr.getFrom());
+                    User usTo = TransactionUtil.getUserByName(users, tr.getTo());
 
                     usFrom.addTransactionFrom(tr);
                     usTo.addTransactionTo(tr);
@@ -47,27 +44,5 @@ public class JSONLoader {
         return users;
     }
 
-    public static void writeJSON(String filename, List<Transaction> tr){
-        try{
-            File file = new File(filename);
-            file.createNewFile();
-            FileWriter writer = new FileWriter(filename);
-            JsonArray list = new JsonArray();
-            for (Transaction trans : tr){
-                String jsonString = new Gson().toJson(trans);
-                JsonParser parser = new JsonParser();
-                JsonObject jsonObject = (JsonObject) parser.parse(jsonString);
-                list.add(jsonObject);
-            }
-
-            writer.write(list.toString());
-            writer.close();
-            System.out.println("Successfully exported to " + filename);
-        }
-        catch(IOException e){
-            System.out.println("An error occured");
-            e.printStackTrace();
-        }
-    }
-    
+   
 }
