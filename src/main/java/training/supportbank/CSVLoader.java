@@ -6,6 +6,8 @@ import java.util.Scanner;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class CSVLoader {
 
@@ -40,6 +42,26 @@ public class CSVLoader {
             e.printStackTrace();
         }
         return users;
+    }
+    public static void writeCSV(String filename, List<Transaction> tr){
+        try{
+            File file = new File(filename);
+            file.createNewFile();
+            FileWriter writer = new FileWriter(filename);
+            writer.write("Date,From,To,Narrative,Amount\n");
+            for (Transaction trans : tr){
+                writer.write(String.join(",", trans.getDate(), trans.getFrom(), 
+                    trans.getTo(), trans.getNarrative(), Double.toString(trans.getAmount())));
+                    writer.write("\n");
+            }
+
+            writer.close();
+            System.out.println("Successfully exported to " + filename);
+        }
+        catch(IOException e){
+            System.out.println("An error occured");
+            e.printStackTrace();
+        }
     }
     
 }

@@ -16,6 +16,10 @@ public class User{
         return netMoney;
     }
 
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
     public User(String name){
         this.name = name;
         transactions = new ArrayList<>();

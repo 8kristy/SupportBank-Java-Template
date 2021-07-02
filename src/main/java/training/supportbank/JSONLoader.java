@@ -1,14 +1,14 @@
 package training.supportbank;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Reader;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.*;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -45,6 +45,29 @@ public class JSONLoader {
             e.printStackTrace();
         }
         return users;
+    }
+
+    public static void writeJSON(String filename, List<Transaction> tr){
+        try{
+            File file = new File(filename);
+            file.createNewFile();
+            FileWriter writer = new FileWriter(filename);
+            JsonArray list = new JsonArray();
+            for (Transaction trans : tr){
+                String jsonString = new Gson().toJson(trans);
+                JsonParser parser = new JsonParser();
+                JsonObject jsonObject = (JsonObject) parser.parse(jsonString);
+                list.add(jsonObject);
+            }
+
+            writer.write(list.toString());
+            writer.close();
+            System.out.println("Successfully exported to " + filename);
+        }
+        catch(IOException e){
+            System.out.println("An error occured");
+            e.printStackTrace();
+        }
     }
     
 }
